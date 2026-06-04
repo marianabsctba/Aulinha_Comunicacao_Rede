@@ -1,0 +1,572 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" /><title>TRON Legacy — Protocolos de Rede na Grid</title><style>:root{--bg:#020711;--panel:#061321;--cyan:#00eaff;--blue:#147bff;--text:#eafcff;--muted:#a5c7d2;--bad:#ff4d6d;--ok:#47ffbd;--warn:#ffd166;--line:rgba(0,234,255,.35)}*{box-sizing:border-box}html{scroll-behavior:smooth;background:#020711}body{margin:0;color:var(--text);font-family:Segoe UI,Inter,Arial,sans-serif;background:radial-gradient(circle at 50% -10%,rgba(0,234,255,.22),transparent 35%),radial-gradient(circle at 80% 30%,rgba(20,123,255,.12),transparent 30%),linear-gradient(145deg,#01030a,#061321 55%,#020711);min-height:100vh;overflow-x:hidden}body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;z-index:-1;background-image:linear-gradient(rgba(0,234,255,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(0,234,255,.08) 1px,transparent 1px);background-size:44px 44px}button,input{font:inherit}button{-webkit-tap-highlight-color:transparent}.hidden{display:none!important}.shell{max-width:1240px;margin:auto;padding:22px}.topbar{position:sticky;top:0;z-index:20;backdrop-filter:blur(16px);background:rgba(1,7,15,.88);border-bottom:1px solid var(--line)}.nav{max-width:1240px;margin:auto;padding:12px 22px;display:flex;gap:12px;align-items:center;justify-content:space-between}.logo{font-size:18px;font-weight:900;letter-spacing:3px;color:var(--cyan);text-shadow:0 0 16px var(--cyan)}.nav small{color:var(--muted)}.audioPanel{position:fixed;right:14px;bottom:14px;z-index:50;display:flex;align-items:center;gap:8px;padding:10px;border:1px solid var(--line);border-radius:16px;background:rgba(1,7,15,.9);box-shadow:0 0 22px rgba(0,234,255,.18);backdrop-filter:blur(12px)}.audioPanel button{width:40px;height:40px;border-radius:12px;padding:0}.vol{min-width:54px;text-align:center;color:var(--cyan);font-weight:800;font-size:13px}.hero{min-height:100svh;display:grid;place-items:center;text-align:center;padding:28px 14px}.card{background:#061321;background-image:linear-gradient(180deg,rgba(7,26,43,.96),rgba(2,8,16,.98));border:1px solid var(--line);border-radius:24px;box-shadow:0 0 35px rgba(0,234,255,.16),inset 0 0 32px rgba(0,234,255,.06)}.login{width:min(820px,96vw);padding:36px;position:relative;overflow:hidden}.login::before,.module::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(120deg,transparent,rgba(0,234,255,.08),transparent);transform:translateX(-80%);animation:scan 5s infinite}@keyframes scan{60%,100%{transform:translateX(80%)}}h1{font-size:clamp(40px,8vw,92px);line-height:.9;margin:12px 0;text-transform:uppercase;letter-spacing:4px;text-shadow:0 0 18px rgba(255,255,255,.8),0 0 30px var(--cyan)}h2{font-size:clamp(26px,4.2vw,52px);margin:0 0 12px;text-transform:uppercase;letter-spacing:2px;color:#fff;text-shadow:0 0 18px rgba(0,234,255,.5)}h3{color:var(--cyan);letter-spacing:1px;text-transform:uppercase}p{line-height:1.65;color:#dff8ff}.lead{font-size:20px;color:#d5f7ff;max-width:850px;margin:18px auto}.inputRow{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:28px}input{min-width:min(420px,90vw);padding:16px 18px;border-radius:14px;border:1px solid var(--line);background:#020711;color:var(--text);outline:none;box-shadow:inset 0 0 18px rgba(0,234,255,.08)}.btn{cursor:pointer;border:1px solid var(--cyan);background:linear-gradient(90deg,rgba(0,234,255,.18),rgba(20,123,255,.14));color:var(--text);padding:14px 20px;border-radius:14px;text-transform:uppercase;font-weight:800;letter-spacing:1px;box-shadow:0 0 18px rgba(0,234,255,.22);transition:.2s;touch-action:manipulation}.btn:hover{transform:translateY(-2px);box-shadow:0 0 28px rgba(0,234,255,.35)}.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}.grid{display:grid;grid-template-columns:280px 1fr;gap:18px;margin-top:18px}.sidebar{position:sticky;top:76px;align-self:start;padding:18px}.progress{height:12px;background:#03101b;border:1px solid var(--line);border-radius:999px;overflow:hidden;margin:14px 0}.bar{height:100%;width:0%;background:linear-gradient(90deg,var(--cyan),var(--blue));box-shadow:0 0 18px var(--cyan);transition:.4s}.steps{display:grid;gap:9px;margin-top:14px}.step{padding:12px;border:1px solid rgba(0,234,255,.18);border-radius:14px;color:var(--muted)}.step.done{color:var(--ok);border-color:rgba(71,255,189,.42)}.step.active{color:var(--cyan);background:rgba(0,234,255,.08);border-color:var(--cyan)}.module{position:relative;overflow:hidden;padding:28px;margin-bottom:18px;scroll-margin-top:88px;min-height:160px;background:#061321 !important;background-image:linear-gradient(180deg,rgba(7,26,43,.97),rgba(2,8,16,.99)) !important}.module.locked{opacity:.52;filter:saturate(.6);pointer-events:none}.kicker{color:var(--cyan);font-weight:900;letter-spacing:3px;text-transform:uppercase}.callout{border-left:4px solid var(--cyan);background:rgba(0,234,255,.08);padding:16px 18px;border-radius:12px;margin:18px 0}.roast{color:#fff;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.1);padding:14px 16px;border-radius:14px}.layers{display:grid;gap:8px;max-width:520px;margin:auto}.layer{padding:14px;border:1px solid var(--line);background:rgba(0,234,255,.06);border-radius:14px;text-align:center;font-weight:800}.packet{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:18px 0}.chunk{padding:10px 12px;border:1px solid var(--cyan);border-radius:10px;background:rgba(0,234,255,.1);box-shadow:0 0 14px rgba(0,234,255,.12)}.controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.choiceGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:18px}.choice{text-align:left;padding:15px;border-radius:15px;border:1px solid rgba(0,234,255,.22);background:rgba(2,12,22,.7);color:var(--text);cursor:pointer;line-height:1.48;width:100%}.choice:hover{border-color:var(--cyan)}.choice.correct{border-color:var(--ok);box-shadow:0 0 18px rgba(71,255,189,.15)}.choice.wrong{border-color:var(--bad);box-shadow:0 0 18px rgba(255,77,109,.14)}.feedback{margin-top:12px;padding:14px;border-radius:14px;background:rgba(0,234,255,.06);border:1px solid var(--line);color:#dffaff}.dragzone{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}.bucket{min-height:220px;border:1px dashed var(--line);border-radius:18px;padding:14px;background:rgba(0,234,255,.04)}.bucket.activeBucket{border-color:var(--warn);box-shadow:0 0 20px rgba(255,209,102,.12)}.tokens{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.token{padding:10px 12px;border-radius:999px;border:1px solid var(--cyan);background:rgba(0,234,255,.08);cursor:grab;user-select:none}.token.selected{outline:2px solid var(--warn)}.token.inBucket{cursor:default;display:inline-block;margin:4px}.sortHelp{color:var(--muted);font-size:14px}.handshake{display:grid;grid-template-columns:1fr 80px 1fr;gap:10px;align-items:center;margin-top:18px}.host{min-height:220px;padding:18px;border:1px solid var(--line);border-radius:20px;background:#020711 !important;background-image:linear-gradient(180deg,rgba(2,7,17,.98),rgba(0,0,0,.88)) !important}.lane{height:220px;position:relative;border-left:1px dashed var(--line);border-right:1px dashed var(--line);background:#020711 !important}.dot{width:18px;height:18px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan);position:absolute;left:50%;top:8%;transform:translateX(-50%);transition:.55s}.log{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#020711 !important;color:#bdf8ff !important;border:1px solid rgba(0,234,255,.2);border-radius:14px;padding:12px;min-height:110px;white-space:pre-wrap}.finalBox{text-align:center;padding:28px;border:1px solid rgba(71,255,189,.4);border-radius:22px;background:rgba(71,255,189,.07)}.certWrap{display:grid;gap:14px;place-items:center}canvas{max-width:100%;border-radius:14px;border:1px solid var(--line);box-shadow:0 0 28px rgba(0,234,255,.2);background:#020711}@media(max-width:900px){.shell{padding:12px}.grid{grid-template-columns:1fr;gap:12px}.sidebar{position:relative;top:0}.choiceGrid,.dragzone{grid-template-columns:1fr}.handshake{grid-template-columns:1fr}.lane{height:70px;border-left:0;border-right:0;border-top:1px dashed var(--line);border-bottom:1px dashed var(--line)}.dot{top:50%;left:12%;transform:translateY(-50%)}}@media(max-width:560px){.nav{padding:10px 12px;align-items:flex-start;flex-direction:column}.logo{font-size:14px;letter-spacing:2px}.audioPanel{left:10px;right:10px;bottom:10px;justify-content:center}.login{padding:22px 16px;border-radius:18px}h1{font-size:42px;letter-spacing:2px}h2{font-size:28px;letter-spacing:1px}.lead{font-size:16px}input,.btn{width:100%;min-width:0}.audioPanel .btn{width:40px}.module{padding:18px 14px;border-radius:18px}.controls .btn{width:100%}.choice{font-size:14px;padding:13px}.tokens{display:grid;grid-template-columns:1fr}.token{border-radius:14px;text-align:center}.shell{padding-bottom:96px}}.retryBox{margin-top:12px;padding:14px;border-radius:14px;background:#180812;border:1px solid rgba(255,77,109,.45);color:#ffe8ee}.retryBox .btn{margin-top:10px}</style></head><body style="background:#020711;"><audio id="bgAudio" src="./tron_assets/tron_theme.mp3" loop preload="metadata"></audio><div class="audioPanel" id="audioPanel"><button class="btn" type="button" id="muteBtn" title="Mutar">🔊</button><button class="btn" type="button" id="volDown" title="Diminuir">−</button><span class="vol" id="volText">35%</span><button class="btn" type="button" id="volUp" title="Aumentar">+</button></div><div class="topbar hidden" id="topbar"><div class="nav"><div class="logo">Be Safe Academy - Aulinha de Ciber</div><small id="who">Programa: —</small></div></div><section class="hero" id="loginScreen"><form class="login card" id="loginForm"><div class="kicker">Be Safe Academy - Aulinha de Ciber</div><h1>TRON<br>Legacy</h1><p class="lead">A Jornada de um Pacote na Grid. Protocolos, camadas, serviços, confiabilidade e aquela tragédia corporativa chamada “ninguém combinou o formato da mensagem”.</p><div class="roast">Bebê, antes de entrar na Grid, coloca teu nome. Sem nome não tem certificado. Nem o pacote anônimo aguenta tanta falta de governança.</div><div class="inputRow"><input id="studentName" maxlength="48" placeholder="Digite seu nome para iniciar" autocomplete="name" /><button class="btn" id="startBtn" type="submit">Entrar na Grid</button></div></form></section><main class="shell hidden" id="app"><div class="grid"><aside class="sidebar card"><h3>Progresso da missão</h3><div class="progress"><div class="bar" id="bar"></div></div><div id="percent">0%</div><div class="steps" id="steps"></div></aside><section><article class="module card" data-step="0"><div class="kicker">Capítulo 1</div><h2>A Grid está pegando fogo, bebê</h2><p>Bem-vindo à Grid. Tudo parecia lindo: programas conversando, arquivos trafegando, pacotes passeando como se tivessem plano de saúde. Até alguém achar que protocolo era “detalhe”. Pronto. Mensagem chegou quebrada, arquivo perdeu pedaço e o sistema inteiro virou reunião de alinhamento que poderia ser e-mail.</p><div class="callout"><b>Protocolo</b> é o conjunto de regras que define formato, ordem e significado das mensagens. Sem protocolo, comunicação vira adivinhação com cabo de rede.</div><p>Dois sistemas só conversam quando concordam em como falar. Um lado precisa saber o que o outro quer dizer, em qual formato a mensagem vem e o que cada resposta significa. Sem isso, o pacote até sai… mas chega parecendo fofoca editada por estagiário em pânico.</p><button class="btn complete">Entendi o caos</button></article><article class="module card locked" data-step="1"><div class="kicker">Capítulo 2</div><h2>Os quatro objetivos da Grid</h2><p>Protocolos de rede não existem para enfeitar apostila. Eles tentam resolver quatro dores bem reais, daquelas que fazem o plantão tocar quando todo mundo já estava emocionalmente indisponível.</p><div class="choiceGrid pillars"><div class="choice"><b>Confiabilidade</b><br>Detectar erro, corrigir quando possível ou retransmitir. Porque “quase chegou certo” é lindo só em poesia ruim.</div><div class="choice"><b>Alocação de recursos</b><br>Compartilhar banda, fila, enlaces e capacidade sem deixar um programa guloso engolir a Grid inteira.</div><div class="choice"><b>Evolução</b><br>Permitir trocar partes internas sem quebrar tudo. O sonho de qualquer pessoa que já tocou num legado às 18h de sexta.</div><div class="choice"><b>Segurança</b><br>Confidencialidade, autenticação e integridade. Porque sempre aparece um “sou o banco, confia”.</div></div><div class="callout">Na prática: rede boa precisa sobreviver a erro, disputa por recurso, mudança tecnológica e gente tentando fazer besteira com convicção.</div><button class="btn complete">Restaurar pilares</button></article><article class="module card locked" data-step="2"><div class="kicker">Capítulo 3</div><h2>Camadas: cada um no seu quadrado</h2><p>Camadas existem para separar responsabilidades. Uma camada oferece um serviço para a camada de cima e usa o serviço da camada de baixo. Isso evita que todo mundo precise entender tudo ao mesmo tempo, porque aí não é arquitetura, é terapia em grupo com cabo console.</p><div class="layers"><div class="layer">Camada 5 — Programa da Grid</div><div class="layer">Camada 4 — Circuito confiável</div><div class="layer">Camada 3 — Rota pela cidade digital</div><div class="layer">Camada 2 — Entrega entre vizinhos</div><div class="layer">Camada 1 — Luz, sinal, bit e desespero</div></div><div class="callout">A comunicação parece horizontal entre pares da mesma camada, mas fisicamente os dados descem, atravessam o meio físico e sobem do outro lado. É tipo bastidor de evento: o público vê mágica; a equipe vê cabo, suor e gambiarra controlada.</div><button class="btn complete">Subir na Grid</button></article><article class="module card locked" data-step="3"><div class="kicker">Capítulo 4</div><h2>O pacote gordinho: encapsulamento</h2><p>Bebê, sua mensagem nasce simples: “MISSÃO CRÍTICA”. Aí cada camada adiciona controle, endereço, sequência, verificação e outras coisinhas. Quando vê, a mensagem saiu de casa magrinha e voltou parecendo pacote de edital com anexo, retificação e planilha escondida.</p><div class="packet" id="packet"><span class="chunk">MISSÃO CRÍTICA</span></div><div class="controls"><button class="btn" id="encapBtn" type="button">Encapsular</button><button class="btn" id="resetPacket" type="button">Resetar</button></div><div class="feedback" id="encapText">Clique para ver as camadas adicionando informações.</div><button class="btn complete" id="encapComplete" disabled>Fechar pacote</button></article><article class="module card locked" data-step="4"><div class="kicker">Capítulo 5</div><h2>Circuito ou datagrama?</h2><p>Nem toda comunicação quer a mesma coisa. Às vezes você quer entrega perfeita e ordenada. Às vezes você só quer baixa latência, porque vídeo travando para recuperar pixel perdido é uma ofensa estética.</p><div class="callout">Serviço orientado a conexão lembra um circuito: abre, usa e fecha. Serviço não orientado a conexão lembra carta: cada mensagem carrega o destino e tenta a vida. O universo é cruel, bebê, e os pacotes também sofrem.</div><div id="serviceGame"></div></article><article class="module card locked" data-step="5"><div class="kicker">Capítulo 6</div><h2>Handshake da Grid</h2><p>Comunicação orientada a conexão é uma pequena novela. Servidor espera, cliente chama, servidor aceita, dados trafegam e alguém encerra. Tudo isso para uma aplicação fingir que “foi só uma requisiçãozinha”.</p><div class="callout">Aqui a ordem importa: primeiro o servidor fica ouvindo, depois o cliente pede conexão, o servidor aceita, os dados são enviados/recebidos e a conexão é encerrada. Se fizer fora de ordem, a Grid olha para você com decepção silenciosa.</div><div class="handshake"><div class="host"><h3>Cliente</h3><div class="log" id="clientLog">Aguardando comando...</div></div><div class="lane"><div class="dot" id="dot"></div></div><div class="host"><h3>Servidor</h3><div class="log" id="serverLog">LISTEN ativo.</div></div></div><div class="controls" id="hsControls"></div><button class="btn complete" id="hsComplete" disabled>Conexão entendida</button></article><article class="module card locked" data-step="6"><div class="kicker">Capítulo 7</div><h2>Serviço não é protocolo</h2><p>Respira, bebê, porque aqui muita gente tropeça bonito. <b>Serviço</b> é o que uma camada oferece para a camada acima. <b>Protocolo</b> é o conjunto de regras que entidades pares usam para fazer isso acontecer.</p><div class="callout"><b>Serviço = O QUE.</b> Abrir conexão, enviar dados, receber dados, encerrar conexão.<br><b>Protocolo = COMO.</b> Header, ACK, sequência, retransmissão, temporizador, controle de erro.</div><p>Analogia honesta: você pede pizza. A pizza chegar é o serviço. Moto, rota, GPS, capacete, maquininha e o motoboy julgando seu pedido às 23h são o protocolo.</p><p class="sortHelp"><b>Como jogar:</b> clique em um cartão abaixo e depois clique no balde correto. No computador também dá para arrastar. No celular é clique mesmo, porque arrastar em tela pequena é uma humilhação desnecessária.</p><div class="dragzone"><div class="bucket" data-bucket="servico"><h3>Serviço</h3><p>O que é oferecido à camada acima.</p></div><div class="bucket" data-bucket="protocolo"><h3>Protocolo</h3><p>Regras entre pares da mesma camada.</p></div></div><div class="tokens" id="tokens"></div><div class="feedback" id="sortFeedback">Clique em um cartão e depois no balde correto.</div><button class="btn complete" id="sortComplete" disabled>Separar sem passar vergonha</button></article><article class="module card locked" data-step="7"><div class="kicker">Desafio final</div><h2>Salve o backup da Grid</h2><p>O MCP tentou enviar <b>ULTIMO_BACKUP_DA_GRID_8GB.zip</b> por uma rede com perda, atraso e fragmentação. Escolha a estratégia menos catastrófica.</p><div class="callout">Arquivo grande precisa chegar inteiro, ordenado e sem pedaços fantasmas chegando depois para confundir tudo. Datagrama puro pode até ser rápido, mas velocidade sem controle é só acidente com estética futurista.</div><div id="finalQuiz"></div></article><article class="module card locked" data-step="8"><div class="kicker">Certificado</div><h2>Arquiteto da Grid</h2><div class="finalBox"><p>Bebê, agora você sabe o que acontece quando um pacote sai passear pela rede e tenta voltar inteiro.</p><button class="btn" id="makeCert" type="button">Gerar certificado PNG</button></div><div class="certWrap hidden" id="certWrap"><canvas id="certCanvas" width="1536" height="1024"></canvas><a class="btn" id="downloadCert" download="certificado-arquiteto-da-grid.png">Baixar PNG</a></div></article></section></div></main><script>
+(function(){
+"use strict";
+
+const CERT_BG = "./tron_assets/certificado_tron.png";
+const qs = (s, r=document) => r.querySelector(s);
+const qsa = (s, r=document) => Array.prototype.slice.call(r.querySelectorAll(s));
+
+function safe(fn) {
+  try { fn(); } catch (e) {
+    document.body.style.background = "#020711";
+    console.error(e);
+    alert("A Grid tropeçou num erro, bebê. Mas não vai ficar tela branca.");
+  }
+}
+
+function randomToken() {
+  if (window.crypto && crypto.getRandomValues) {
+    return Array.from(crypto.getRandomValues(new Uint32Array(4))).join("-");
+  }
+  return String(Date.now()) + "-" + Math.random().toString(16).slice(2);
+}
+
+const state = {
+  name: "",
+  step: 0,
+  encap: 0,
+  hs: 0,
+  sorted: {},
+  selectedToken: null,
+  token: randomToken(),
+  sessionSalt: randomHex(16),
+  questionSalt: randomHex(16),
+  certSalt: randomHex(16)
+};
+
+const stepsInfo = [
+  "Caos da comunicação","Objetivos da Grid","Camadas","Encapsulamento","Serviços","Handshake","Serviço x Protocolo","Desafio final","Certificado"
+];
+
+const encapStages = [
+  ["H4","MISSÃO CRÍTICA"],
+  ["H3","H4","MISSÃO CRÍTICA"],
+  ["H2","H3","H4","MISSÃO CRÍTICA","T2"],
+  ["BITSTREAM","H2","H3","H4","MISSÃO CRÍTICA","T2"]
+];
+
+const serviceQuestions = [
+  {
+    q:"Você está transmitindo vídeo em tempo real dentro da Grid. Qual estratégia faz mais sentido?",
+    options:[
+      "Usar confirmação rígida para cada fragmento, bloqueando a reprodução até que todos os pequenos erros sejam corrigidos, garantindo integridade perfeita mesmo que a experiência congele a cada perda mínima.",
+      "Priorizar baixa latência e continuidade do fluxo, aceitando pequenas perdas ocasionais que não comprometem o entendimento geral do conteúdo, porque o usuário prefere um pixel estranho a uma tela parada.",
+      "Criar uma conexão formal para cada quadro do vídeo, encerrando e abrindo novamente o canal a cada unidade visual para manter rastreabilidade máxima do tráfego enviado.",
+      "Enviar tudo como mensagens independentes sem qualquer controle de tempo, ordem ou adaptação, confiando que a Grid decidirá sozinha o que fazer porque esperança também é arquitetura."
+    ],
+    a:1,
+    exp:"Para mídia em tempo real, atraso pode doer mais que pequena perda. Confiabilidade absoluta pode destruir a experiência."
+  },
+  {
+    q:"Um arquivo grande precisa chegar íntegro, ordenado e sem fragmentos perdidos. O que é mais adequado?",
+    options:[
+      "Usar um fluxo confiável e ordenado, com controle de sequência, confirmação, retransmissão e encerramento claro, para que o receptor saiba o que chegou e o que ainda precisa ser recuperado.",
+      "Enviar todos os fragmentos como datagramas independentes e presumir que o receptor vai descobrir sozinho se o último pacote era realmente o último, porque nada diz maturidade como adivinhação binária.",
+      "Aceitar perdas ocasionais para reduzir atraso, já que alguns bytes ausentes em um arquivo executável provavelmente só deixam o programa com mais personalidade.",
+      "Priorizar apenas velocidade de envio, sem confirmação e sem ordenação, porque se o arquivo corromper pelo menos chegou rápido e isso deve contar como inovação."
+    ],
+    a:0,
+    exp:"Arquivo grande precisa de confiabilidade, ordem e confirmação. Aqui o custo do controle compensa."
+  },
+  {
+    q:"Uma aplicação faz uma consulta simples a um servidor e espera uma resposta curta. Qual modelo descreve melhor essa interação?",
+    options:[
+      "Um fluxo permanente de bytes com limites de mensagem invisíveis, mantido durante toda a vida da aplicação mesmo quando há apenas uma pergunta e uma resposta.",
+      "Uma interação de solicitação-resposta, em que o cliente envia uma requisição específica e o servidor devolve uma réplica correspondente, sem transformar uma consulta pequena em ópera de seis atos.",
+      "Um broadcast sem destinatário específico, esperando que algum servidor emocionalmente disponível responda quando achar conveniente.",
+      "Uma sequência de mensagens confiáveis com preservação de limites para cada página de um livro, mesmo que a aplicação só queira saber o resultado de uma consulta pontual."
+    ],
+    a:1,
+    exp:"Solicitação-resposta é o padrão natural para cliente-servidor simples: pergunta de um lado, réplica do outro."
+  }
+];
+
+const finalQuestions = [
+  {
+    q:"O MCP envia dois arquivos grandes em sequência. Alguns pacotes do primeiro atrasam e podem chegar misturados com o segundo. Qual mecanismo ajuda mais a evitar confusão?",
+    options:[
+      "Identificar, numerar e controlar a sequência dos fragmentos dentro de uma comunicação confiável, permitindo distinguir partes de mensagens diferentes e reconstruir corretamente o conteúdo recebido.",
+      "Enviar tudo mais rápido, porque pacotes atrasados tendem a ficar constrangidos e normalmente encontram o caminho certo quando a rede percebe a urgência.",
+      "Remover cabeçalhos para reduzir overhead, já que menos informação de controle torna o pacote mais leve e, portanto, magicamente mais compreensível no destino.",
+      "Aceitar qualquer fragmento recebido como válido, mesmo que pertença a outro arquivo, pois a Grid deve confiar mais nos pacotes e parar de ser tão desconfiada."
+    ],
+    a:0,
+    exp:"Numeração, identificação e controle de sequência evitam misturar fragmentos e permitem remontagem correta."
+  },
+  {
+    q:"Qual frase separa melhor serviço e protocolo?",
+    options:[
+      "Serviço é a promessa visível para a camada acima; protocolo é o conjunto de regras usado entre entidades pares para cumprir essa promessa sem expor a bagunça interna.",
+      "Serviço e protocolo são nomes diferentes para a mesma coisa, usados apenas para deixar livros de redes maiores e estudantes mais cansados.",
+      "Protocolo é sempre uma interface vertical entre camadas, enquanto serviço é sempre o pacote horizontal enviado entre máquinas distintas.",
+      "Serviço é o cabeçalho colocado no pacote, e protocolo é a operação abstrata que a aplicação chama quando quer enviar uma mensagem."
+    ],
+    a:0,
+    exp:"Serviço é interface vertical. Protocolo é regra horizontal entre pares da mesma camada."
+  },
+  {
+    q:"Por que camadas ajudam a evolução da rede?",
+    options:[
+      "Porque permitem trocar uma implementação ou protocolo interno desde que o serviço visível para a camada superior permaneça compatível, evitando que cada mudança vire incêndio com ata de reunião.",
+      "Porque obrigam todas as máquinas a terem interfaces internas idênticas, escritas pelo mesmo fabricante, com o mesmo hardware e a mesma versão de firmware para sempre.",
+      "Porque eliminam a necessidade de protocolos, já que cada camada passa a entender diretamente todas as outras camadas remotas sem intermediários.",
+      "Porque impedem fragmentação, roteamento, controle de fluxo e segurança, concentrando todas as funções em uma única camada mais fácil de culpar depois."
+    ],
+    a:0,
+    exp:"A interface estável permite evolução interna. Essa abstração é o ponto bonito da história."
+  }
+];
+
+const sortItems = [
+  ["Abrir conexão","servico"],["Enviar dados","servico"],["Receber dados","servico"],["Encerrar conexão","servico"],
+  ["ACK","protocolo"],["Cabeçalho","protocolo"],["Retransmissão","protocolo"],["Número de sequência","protocolo"]
+];
+
+function fallbackHash(str) {
+  let h = 2166136261;
+  for (let i=0; i<str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h += (h<<1) + (h<<4) + (h<<7) + (h<<8) + (h<<24);
+  }
+  return ("00000000" + (h >>> 0).toString(16)).slice(-8).repeat(8);
+}
+
+function xorStr(s,k) {
+  let out = "";
+  for (let i=0; i<s.length; i++) out += String.fromCharCode(s.charCodeAt(i) ^ k.charCodeAt(i % k.length));
+  return out;
+}
+
+function hexToBytes(hex) {
+  const out = [];
+  for (let i=0; i<hex.length; i+=2) out.push(parseInt(hex.slice(i,i+2),16));
+  return out;
+}
+
+function strToBytes(str) {
+  return Array.from(new TextEncoder().encode(str));
+}
+
+function bytesToHex(bytes) {
+  return bytes.map(b => b.toString(16).padStart(2,"0")).join("");
+}
+
+function randomHex(bytes=16) {
+  if (window.crypto && crypto.getRandomValues) {
+    const arr = new Uint8Array(bytes);
+    crypto.getRandomValues(arr);
+    return bytesToHex(Array.from(arr));
+  }
+  let out = "";
+  for (let i=0;i<bytes;i++) out += Math.floor(Math.random()*256).toString(16).padStart(2,"0");
+  return out;
+}
+
+function blake2bHex(input, outLen=32, saltHex="") {
+  try {
+    const MASK = (1n << 64n) - 1n;
+    const IV = [
+      0x6a09e667f3bcc908n,0xbb67ae8584caa73bn,0x3c6ef372fe94f82bn,0xa54ff53a5f1d36f1n,
+      0x510e527fade682d1n,0x9b05688c2b3e6c1fn,0x1f83d9abfb41bd6bn,0x5be0cd19137e2179n
+    ];
+    const SIGMA = [
+      [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],
+      [14,10,4,8,9,15,13,6,1,12,0,2,11,7,5,3],
+      [11,8,12,0,5,2,15,13,10,14,3,6,7,1,9,4],
+      [7,9,3,1,13,12,11,14,2,6,5,10,4,0,15,8],
+      [9,0,5,7,2,4,10,15,14,1,11,12,6,8,3,13],
+      [2,12,6,10,0,11,8,3,4,13,7,5,15,14,1,9],
+      [12,5,1,15,14,13,4,10,0,7,6,3,9,2,8,11],
+      [13,11,7,14,12,1,3,9,5,0,15,4,8,6,2,10],
+      [6,15,14,9,11,3,0,8,12,2,13,7,1,4,10,5],
+      [10,2,8,4,7,6,1,5,15,11,9,14,3,12,13,0],
+      [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],
+      [14,10,4,8,9,15,13,6,1,12,0,2,11,7,5,3]
+    ];
+    const rotr = (x,n) => ((x >> BigInt(n)) | (x << BigInt(64-n))) & MASK;
+    const load64 = (b,i) => {
+      let r=0n;
+      for (let j=0;j<8;j++) r |= BigInt(b[i+j] || 0) << BigInt(8*j);
+      return r;
+    };
+    const store64 = x => {
+      const out=[];
+      for (let i=0;i<8;i++) out.push(Number((x >> BigInt(8*i)) & 255n));
+      return out;
+    };
+    const G = (v,a,b,c,d,x,y) => {
+      v[a]=(v[a]+v[b]+x)&MASK; v[d]=rotr(v[d]^v[a],32);
+      v[c]=(v[c]+v[d])&MASK;   v[b]=rotr(v[b]^v[c],24);
+      v[a]=(v[a]+v[b]+y)&MASK; v[d]=rotr(v[d]^v[a],16);
+      v[c]=(v[c]+v[d])&MASK;   v[b]=rotr(v[b]^v[c],63);
+    };
+    let bytes = strToBytes(input);
+    let salt = saltHex ? hexToBytes(saltHex).slice(0,16) : [];
+    while (salt.length < 16) salt.push(0);
+    let h = IV.slice();
+    h[0] ^= 0x01010000n ^ BigInt(outLen);
+    h[4] ^= load64(salt,0);
+    h[5] ^= load64(salt,8);
+
+    let t = 0n;
+    const compress = (block, last) => {
+      const m = Array.from({length:16},(_,i)=>load64(block,i*8));
+      const v = h.concat(IV);
+      t += BigInt(block.realLen || 128);
+      v[12] ^= t & MASK;
+      v[13] ^= (t >> 64n) & MASK;
+      if (last) v[14] ^= MASK;
+      for (let r=0;r<12;r++) {
+        const s = SIGMA[r];
+        G(v,0,4,8,12,m[s[0]],m[s[1]]);
+        G(v,1,5,9,13,m[s[2]],m[s[3]]);
+        G(v,2,6,10,14,m[s[4]],m[s[5]]);
+        G(v,3,7,11,15,m[s[6]],m[s[7]]);
+        G(v,0,5,10,15,m[s[8]],m[s[9]]);
+        G(v,1,6,11,12,m[s[10]],m[s[11]]);
+        G(v,2,7,8,13,m[s[12]],m[s[13]]);
+        G(v,3,4,9,14,m[s[14]],m[s[15]]);
+      }
+      for (let i=0;i<8;i++) h[i] = (h[i] ^ v[i] ^ v[i+8]) & MASK;
+    };
+
+    let offset = 0;
+    while (offset + 128 < bytes.length) {
+      const block = bytes.slice(offset, offset+128);
+      block.realLen = 128;
+      compress(block, false);
+      offset += 128;
+    }
+    const last = bytes.slice(offset);
+    const realLen = last.length;
+    while (last.length < 128) last.push(0);
+    last.realLen = realLen;
+    compress(last, true);
+
+    let digest = [];
+    h.forEach(x => digest.push(...store64(x)));
+    return bytesToHex(digest.slice(0,outLen));
+  } catch(e) {
+    return fallbackHash(input).slice(0,outLen*2);
+  }
+}
+
+function hardenedDigest(value, saltHex) {
+  const xored = xorStr(value, "XOR-GRID-MARIANA-BS-" + saltHex);
+  return blake2bHex(xored, 32, saltHex);
+}
+
+async function signedProgress() {
+  try {
+    const payload = JSON.stringify({ n:state.name, s:state.step, t:state.token });
+    const sig = hardenedDigest(payload, state.sessionSalt);
+    localStorage.setItem("tronGridProgress", JSON.stringify({ payload, sig }));
+  } catch(e) {}
+}
+
+function renderSteps() {
+  qs("#steps").innerHTML = stepsInfo.map((x,i) =>
+    `<div class="step ${i<state.step?'done':i===state.step?'active':''}">${String(i+1).padStart(2,"0")} • ${x}</div>`
+  ).join("");
+  const pct = Math.round((state.step)/(stepsInfo.length-1)*100);
+  qs("#bar").style.width = pct + "%";
+  qs("#percent").textContent = pct + "%";
+  qsa(".module").forEach(m => {
+    const s = Number(m.dataset.step);
+    m.classList.toggle("locked", s > state.step);
+  });
+}
+
+function unlockNext() {
+  if (state.step < stepsInfo.length - 1) state.step++;
+  renderSteps();
+  signedProgress();
+  const next = qs(`[data-step="${state.step}"]`);
+  if (next) next.scrollIntoView({ behavior:"smooth", block:"start" });
+}
+
+function setupAudio() {
+  const audio = qs("#bgAudio");
+  const mute = qs("#muteBtn");
+  const down = qs("#volDown");
+  const up = qs("#volUp");
+  const volText = qs("#volText");
+  let volume = 0.35;
+  audio.volume = volume;
+
+  function update() {
+    audio.volume = volume;
+    volText.textContent = Math.round(volume * 100) + "%";
+    mute.textContent = audio.muted ? "🔇" : "🔊";
+  }
+
+  function tryPlay() {
+    audio.play().catch(() => {
+      // Browser pode bloquear autoplay antes do primeiro clique. No clique em Entrar, toca.
+    });
+  }
+
+  mute.addEventListener("click", () => {
+    audio.muted = !audio.muted;
+    if (!audio.muted) tryPlay();
+    update();
+  });
+  down.addEventListener("click", () => {
+    volume = Math.max(0, +(volume - 0.1).toFixed(2));
+    if (volume === 0) audio.muted = true;
+    update();
+  });
+  up.addEventListener("click", () => {
+    volume = Math.min(1, +(volume + 0.1).toFixed(2));
+    if (volume > 0) audio.muted = false;
+    tryPlay();
+    update();
+  });
+  document.addEventListener("click", tryPlay, { once:true });
+  update();
+}
+
+function startGrid() {
+  const input = qs("#studentName");
+  const n = (input.value || "").trim();
+  if (n.length < 2) {
+    alert("Bebê, coloca um nome minimamente real. A Grid não certifica entidade fantasma.");
+    input.focus();
+    return;
+  }
+  state.name = n.replace(/[<>]/g,"");
+  qs("#who").textContent = "Programa: " + state.name;
+  qs("#loginScreen").classList.add("hidden");
+  qs("#app").classList.remove("hidden");
+  qs("#topbar").classList.remove("hidden");
+  const audio = qs("#bgAudio");
+  audio.play().catch(()=>{});
+  renderSteps();
+  signedProgress();
+  setTimeout(() => window.scrollTo({ top:0, behavior:"smooth" }), 30);
+}
+
+function initBasicButtons() {
+  qs("#loginForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    startGrid();
+  });
+
+  qsa(".complete").forEach(btn => btn.addEventListener("click", () => {
+    const art = btn.closest(".module");
+    if (art && Number(art.dataset.step) === state.step) unlockNext();
+  }));
+
+  qs("#encapBtn").addEventListener("click", () => {
+    if (state.encap >= encapStages.length) return;
+    const parts = encapStages[state.encap++];
+    qs("#packet").innerHTML = parts.map(p => `<span class="chunk">${p}</span>`).join("");
+    qs("#encapText").textContent = [
+      "Camada superior adicionou controle de transporte. O pacote começou a criar responsabilidade emocional.",
+      "Agora entrou informação de rota. O pacote sabe para onde vai, diferente de muito projeto em kickoff.",
+      "Enlace adicionou quadro e trailer. Agora ele consegue atravessar o próximo salto sem virar poeira luminosa.",
+      "Virou sinal para trafegar no meio físico. De mensagem bonitinha para bit na pista da Grid."
+    ][state.encap-1];
+    if (state.encap === encapStages.length) qs("#encapComplete").disabled = false;
+  });
+
+  qs("#resetPacket").addEventListener("click", () => {
+    state.encap = 0;
+    qs("#packet").innerHTML = '<span class="chunk">MISSÃO CRÍTICA</span>';
+    qs("#encapText").textContent = "Clique para ver as camadas adicionando informações.";
+    qs("#encapComplete").disabled = true;
+  });
+}
+
+function answerDigest(questionText, optionText, saltHex) {
+  return hardenedDigest(questionText + "::" + optionText, saltHex);
+}
+
+function prepareQuestionSecrets(questions, saltHex) {
+  questions.forEach(q => {
+    q.ah = answerDigest(q.q, q.options[q.a], saltHex);
+    q.a = undefined;
+  });
+}
+
+function makeQuestion(container, questions, doneCb) {
+  let idx = 0, score = 0;
+  function render() {
+    const item = questions[idx];
+    container.innerHTML =
+      `<h3>Questão ${idx+1}/${questions.length}</h3><p>${item.q}</p>` +
+      `<div class="choiceGrid">${item.options.map((o,i)=>`<button class="choice" type="button" data-i="${i}">${o}</button>`).join("")}</div>` +
+      `<div class="feedback hidden"></div>`;
+    qsa(".choice", container).forEach(b => b.addEventListener("click", () => {
+      const chosen = Number(b.dataset.i);
+      const chosenHash = answerDigest(item.q, item.options[chosen], state.questionSalt);
+      const isCorrect = chosenHash === item.ah;
+      qsa(".choice", container).forEach(x => x.disabled = true);
+      b.classList.add(isCorrect ? "correct" : "wrong");
+      const fb = qs(".feedback", container);
+      fb.classList.remove("hidden");
+
+      if (isCorrect) {
+        score++;
+        fb.innerHTML = `<b>Boa, bebê.</b><br>${item.exp}`;
+        const next = document.createElement("button");
+        next.className = "btn";
+        next.type = "button";
+        next.style.marginTop = "12px";
+        next.textContent = idx === questions.length - 1 ? "Concluir" : "Próxima";
+        next.addEventListener("click", () => {
+          idx++;
+          if (idx < questions.length) render();
+          else doneCb(score);
+        });
+        fb.appendChild(document.createElement("br"));
+        fb.appendChild(next);
+      } else {
+        fb.classList.add("retryBox");
+        fb.innerHTML = `<b>Quase, bebê.</b><br>Essa alternativa é plausível, mas não é a mais correta para o cenário. Volta e refaz sem trauma: pacote bom também retransmite quando dá ruim.`;
+        const retry = document.createElement("button");
+        retry.className = "btn";
+        retry.type = "button";
+        retry.textContent = "Refazer questão";
+        retry.addEventListener("click", () => render());
+        fb.appendChild(document.createElement("br"));
+        fb.appendChild(retry);
+      }
+    }));
+  }
+  render();
+}
+
+function setupQuestions() {
+  makeQuestion(qs("#serviceGame"), serviceQuestions, () => unlockNext());
+
+  makeQuestion(qs("#finalQuiz"), finalQuestions, async (score) => {
+    const h = hardenedDigest(state.name + "|" + score + "|" + state.token + "|GRID", state.questionSalt);
+    qs("#finalQuiz").innerHTML =
+      `<div class="finalBox"><h3>Backup salvo.</h3><p>Você concluiu o desafio final. Hash da sessão: <code>${h.slice(0,24).toUpperCase()}</code></p><p>A Grid sobreviveu. O MCP segue desempregado.</p><button class="btn" type="button" id="goCert">Liberar certificado</button></div>`;
+    qs("#goCert").addEventListener("click", unlockNext);
+  });
+}
+
+function setupHandshake() {
+  const hsSeq = ["CONNECT","ACCEPT","SEND","RECEIVE","DISCONNECT","DISCONNECT"];
+  function renderHs() {
+    qs("#hsControls").innerHTML = hsSeq.map((x,i) =>
+      `<button class="btn hs" type="button" data-i="${i}" ${i!==state.hs?'disabled':''}>${x}</button>`
+    ).join("");
+    qsa(".hs").forEach(b => b.addEventListener("click", () => {
+      const cmd = hsSeq[state.hs];
+      const c = qs("#clientLog"), s = qs("#serverLog"), d = qs("#dot");
+      if (matchMedia("(max-width:900px)").matches) d.style.left = (state.hs % 2 === 0 ? "82%" : "12%");
+      else d.style.top = (state.hs % 2 === 0 ? "78%" : "12%");
+      if (cmd === "CONNECT") c.textContent += "\nCONNECT enviado: cliente pede entrada na Grid.";
+      if (cmd === "ACCEPT") s.textContent += "\nACCEPT enviado: servidor aceita o circuito.";
+      if (cmd === "SEND") c.textContent += "\nSEND: cliente envia solicitação de dados.";
+      if (cmd === "RECEIVE") s.textContent += "\nRECEIVE + SEND: servidor processa e responde.";
+      if (cmd === "DISCONNECT" && state.hs === 4) c.textContent += "\nDISCONNECT solicitado: cliente encerra.";
+      if (cmd === "DISCONNECT" && state.hs === 5) s.textContent += "\nDISCONNECT confirmado: túnel fechado.";
+      state.hs++;
+      if (state.hs >= hsSeq.length) qs("#hsComplete").disabled = false;
+      renderHs();
+    }));
+  }
+  renderHs();
+}
+
+function setupSort() {
+  function renderSort() {
+    qs("#tokens").innerHTML = sortItems.map(([txt,type]) => {
+      if (state.sorted[txt]) return "";
+      return `<span class="token" draggable="true" data-t="${txt}" data-type="${type}">${txt}</span>`;
+    }).join("");
+
+    qsa(".token").forEach(t => {
+      t.addEventListener("click", () => {
+        state.selectedToken = t;
+        qsa(".token").forEach(x => x.classList.remove("selected"));
+        qsa(".bucket").forEach(x => x.classList.add("activeBucket"));
+        t.classList.add("selected");
+        qs("#sortFeedback").textContent = "Agora clique no balde correto: Serviço ou Protocolo.";
+      });
+      t.addEventListener("dragstart", ev => {
+        state.selectedToken = t;
+        ev.dataTransfer.setData("text/plain", t.dataset.t);
+      });
+    });
+  }
+
+  function placeToken(bucket) {
+    const selected = state.selectedToken;
+    if (!selected) return;
+    const ok = selected.dataset.type === bucket.dataset.bucket;
+    if (ok) {
+      state.sorted[selected.dataset.t] = true;
+      const chip = document.createElement("div");
+      chip.className = "token inBucket";
+      chip.textContent = selected.dataset.t;
+      bucket.appendChild(chip);
+      state.selectedToken = null;
+      qsa(".bucket").forEach(x => x.classList.remove("activeBucket"));
+      qs("#sortFeedback").textContent = "Correto. Serviço é promessa visível; protocolo é o mecanismo por baixo.";
+      renderSort();
+      if (Object.keys(state.sorted).length === sortItems.length) qs("#sortComplete").disabled = false;
+    } else {
+      qs("#sortFeedback").textContent = "Não, bebê. Refaz: serviço é o que a camada oferece; protocolo é como os pares combinam por baixo. Clica no mesmo cartão e tenta o outro balde.";
+    }
+  }
+
+  qsa(".bucket").forEach(b => {
+    b.addEventListener("click", () => placeToken(b));
+    b.addEventListener("dragover", ev => ev.preventDefault());
+    b.addEventListener("drop", ev => {
+      ev.preventDefault();
+      placeToken(b);
+    });
+  });
+
+  renderSort();
+}
+
+function setupCertificate() {
+  qs("#makeCert").addEventListener("click", async () => {
+    const canvas = qs("#certCanvas");
+    const ctx = canvas.getContext("2d");
+    const img = new Image();
+    img.onload = async () => {
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      ctx.drawImage(img,0,0,canvas.width,canvas.height);
+      const date = new Date().toLocaleDateString("pt-BR");
+      const fullHash = hardenedDigest(state.name+"|"+date+"|"+state.token+"|MarianaBS", state.certSalt).slice(0,32).toUpperCase();
+      ctx.save();
+      ctx.textAlign = "center";
+      ctx.shadowColor = "#00eaff";
+      ctx.shadowBlur = 14;
+      ctx.fillStyle = "#eaffff";
+      ctx.font = "52px Segoe UI, Arial";
+      ctx.fillText(state.name, 768, 470);
+      ctx.font = "28px Segoe UI, Arial";
+      ctx.fillText(date, 512, 775);
+      ctx.font = "8px Segoe UI, Arial";
+      ctx.fillText(fullHash, 1010, 775);
+      ctx.restore();
+      qs("#certWrap").classList.remove("hidden");
+      qs("#downloadCert").href = canvas.toDataURL("image/png");
+      qs("#certWrap").scrollIntoView({behavior:"smooth"});
+    };
+    img.src = CERT_BG;
+  });
+}
+
+safe(() => {
+  setupAudio();
+  prepareQuestionSecrets(serviceQuestions, state.questionSalt);
+  prepareQuestionSecrets(finalQuestions, state.questionSalt);
+  initBasicButtons();
+  setupQuestions();
+  setupHandshake();
+  setupSort();
+  setupCertificate();
+  renderSteps();
+});
+})();
+</script></body></html>
